@@ -171,11 +171,12 @@ public class ReadStoryActivity extends Activity {
             if (pageIndex < book.getPageList().size()) {
                 page = book.getPageList().get(pageIndex);
                 imageUri = Uri.parse(page.getImagePath());
-            } else {
+            }
+            ++pageIndex;
+            if (pageIndex == book.getPageList().size()) {
                 Button nextPageButton = (Button) findViewById(R.id.nextPage);
                 nextPageButton.setText("Close Book");
             }
-            pageIndex++;
         }
 
         imageView = (ImageView) findViewById(R.id.imageView);
@@ -259,7 +260,7 @@ public class ReadStoryActivity extends Activity {
     }
 
     public void moveToNextPage() {
-        if (mPlayer.isPlaying()) {
+        if (mPlayer != null && mPlayer.isPlaying()) {
             mPlayer.stop();
         }
         if (pageIndex < book.getPageList().size()) {
@@ -269,8 +270,9 @@ public class ReadStoryActivity extends Activity {
             intent.putExtra("pageIndex", pageIndex);
             startActivity(intent);
         } else {
-            mPlayer.stop();
-            --pageIndex;
+            if (mPlayer != null && mPlayer.isPlaying()) {
+                mPlayer.stop();
+            }
             NavUtils.navigateUpFromSameTask(this);
         }
     }
@@ -283,7 +285,7 @@ public class ReadStoryActivity extends Activity {
                 moveToNextPage();
                 return true; // Right to left
             } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                pageIndex--;
+                --pageIndex;
                 recreate();
                 return true; // Left to right
             }

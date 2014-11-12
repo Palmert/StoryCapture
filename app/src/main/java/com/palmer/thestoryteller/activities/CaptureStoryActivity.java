@@ -3,7 +3,6 @@ package com.palmer.thestoryteller.activities;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -87,17 +86,19 @@ public class CaptureStoryActivity extends Activity {
             mSystemUiHider.hide();
         }
     };
-    private long bookId;
-    private int pageIndex;
-    private ImageView imageView;
+
     /**
      * The instance of the {@link SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;
+
+    private ImageView imageView;
     private Intent intent;
     private Uri fileUri;
     private Page page;
     private Book book;
+    private long bookId;
+    private int pageIndex;
     private boolean isExistingPage;
 
     @Override
@@ -168,8 +169,8 @@ public class CaptureStoryActivity extends Activity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(id.addPage).setOnTouchListener(mDelayHideTouchListener);
-        imageView = (ImageView) findViewById(id.imageView);
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+
         Uri imageUri = null;
 
         if (getIntent().hasExtra("bookId")) {
@@ -191,13 +192,22 @@ public class CaptureStoryActivity extends Activity {
             page = book.getPageList().get(pageIndex);
             imageUri = Uri.parse(page.getImagePath());
             isExistingPage = true;
-            pageIndex++;
-        } else if (getIntent().hasExtra("fileUri")) {
-            imageUri = (Uri) getIntent().getExtras().get("fileUri");
-            page = new Page(book.getId(), imageUri.toString());
-            pageIndex++;
         }
 
+        if (getIntent().hasExtra("fileUri")) {
+            imageUri = (Uri) getIntent().getExtras().get("fileUri");
+            page = new Page(book.getId(), imageUri.toString());
+        }
+
+        if (page == null) {
+            Button addAudioBtn = (Button) findViewById(id.addAudio);
+            addAudioBtn.setVisibility(View.INVISIBLE);
+            Button saveButton = (Button) findViewById(id.savePage);
+            saveButton.setVisibility(View.INVISIBLE);
+        }
+        ++pageIndex;
+
+        imageView = (ImageView) findViewById(id.imageView);
 
         Bitmap thumbnail = null;
         try {
@@ -207,18 +217,11 @@ public class CaptureStoryActivity extends Activity {
         }
         imageView.setImageBitmap(thumbnail);
 
-        if (page == null) {
-            Button addAudioBtn = (Button) findViewById(id.addAudio);
-            addAudioBtn.setVisibility(View.INVISIBLE);
-            Button saveButton = (Button) findViewById(id.savePage);
-            saveButton.setVisibility(View.INVISIBLE);
-        }
-        final GestureDetector gdt = new GestureDetector(new GestureListener());
-        final ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        final GestureDetector swipeDetector = new GestureDetector(new GestureListener());
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(final View view, final MotionEvent event) {
-                gdt.onTouchEvent(event);
+                swipeDetector.onTouchEvent(event);
                 return true;
             }
         });
@@ -264,7 +267,7 @@ public class CaptureStoryActivity extends Activity {
         } else if (id == R.id.action_delete) {
             BooksDataSource.data.open();
             BooksDataSource.data.deletePage(page.getId());
-            pageIndex--;
+            --pageIndex;
             this.recreate();
         }
         return super.onOptionsItemSelected(item);
@@ -347,14 +350,6 @@ public class CaptureStoryActivity extends Activity {
                 break;
             }
         }
-    }
-
-    public String getRealPathFromURI(Uri contentUri) {
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = managedQuery(contentUri, proj, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
     }
 
     @Override
