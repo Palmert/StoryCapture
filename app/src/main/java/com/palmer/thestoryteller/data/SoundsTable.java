@@ -1,4 +1,4 @@
-package database;
+package com.palmer.thestoryteller.data;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -45,7 +45,7 @@ public class SoundsTable {
 
     public static void onUpgrade(SQLiteDatabase database, int oldVersion,
                                  int newVersion) {
-        Log.w(SoundsTable.class.getName(), "Upgrading database from version "
+        Log.w(SoundsTable.class.getName(), "Upgrading com.palmer.thestoryteller.database from version "
                 + oldVersion + " to " + newVersion
                 + ", which will destroy all old data");
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_SOUNDS);

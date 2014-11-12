@@ -1,4 +1,4 @@
-package com.palmer.thestoryteller;
+package com.palmer.thestoryteller.activities;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -18,20 +18,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.palmer.thestoryteller.util.SystemUiHider;
+import com.palmer.thestoryteller.R;
+import com.palmer.thestoryteller.data.Book;
+import com.palmer.thestoryteller.data.BooksDataSource;
+import com.palmer.thestoryteller.data.Page;
+import com.palmer.thestoryteller.helpers.ImageHelpers;
+import com.palmer.thestoryteller.helpers.SystemUiHider;
 
 import java.io.IOException;
-
-import database.Book;
-import database.BooksDataSource;
-import database.Page;
 
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  *
- * @see com.palmer.thestoryteller.util.SystemUiHider
+ * @see com.palmer.thestoryteller.helpers.SystemUiHider
  */
 public class ReadStoryActivity extends Activity {
 
@@ -66,38 +67,38 @@ public class ReadStoryActivity extends Activity {
      */
     private static final boolean TOGGLE_ON_CLICK = true;
     /**
-     * The flags to pass to {@link com.palmer.thestoryteller.util.SystemUiHider#getInstance}.
+     * The flags to pass to {@link com.palmer.thestoryteller.helpers.SystemUiHider#getInstance}.
      */
     private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
     private static final int SWIPE_MIN_DISTANCE = 80;
     private static final int SWIPE_THRESHOLD_VELOCITY = 100;
-    Handler mHideHandler = new Handler();
-    Runnable mHideRunnable = new Runnable() {
+    private Handler mHideHandler = new Handler();
+    private Runnable mHideRunnable = new Runnable() {
         @Override
         public void run() {
             mSystemUiHider.hide();
         }
     };
-    private ImageView imageView;
+
     /**
-     * The instance of the {@link com.palmer.thestoryteller.util.SystemUiHider} for this activity.
+     * The instance of the {@link com.palmer.thestoryteller.helpers.SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;
+
+    private ImageView imageView;
     private Intent intent;
     private long bookId;
     private int pageIndex;
     private Page page;
     private Book book;
-    private MediaPlayer mPlayer = new MediaPlayer();
+    private MediaPlayer mPlayer;
     private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_read_story);
-        setupActionBar();
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.imageView);
@@ -156,52 +157,46 @@ public class ReadStoryActivity extends Activity {
             }
         });
 
-        imageView = (ImageView) findViewById(R.id.imageView);
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
         findViewById(R.id.nextPage).setOnTouchListener(mDelayHideTouchListener);
+
         if (getIntent().hasExtra("bookId")) {
             bookId = (Long) getIntent().getExtras().get("bookId");
             BooksDataSource.data.open();
             book = BooksDataSource.data.findBookById(bookId);
             imageUri = Uri.parse(book.getImagePath());
         }
+
         if (getIntent().hasExtra("pageIndex")) {
             pageIndex = (Integer) getIntent().getExtras().get("pageIndex");
             if (pageIndex < book.getPageList().size()) {
                 page = book.getPageList().get(pageIndex);
                 imageUri = Uri.parse(page.getImagePath());
+            } else {
+                Button nextPageButton = (Button) findViewById(R.id.nextPage);
+                nextPageButton.setText("Close Book");
             }
             pageIndex++;
         }
 
+        imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
 
         Bitmap thumbnail = null;
         try {
-            thumbnail = Helpers.getThumbnail(imageUri, this);
+            thumbnail = ImageHelpers.getThumbnail(imageUri, this);
         } catch (IOException e) {
             e.printStackTrace();
         }
         imageView.setImageBitmap(thumbnail);
 
-        final GestureDetector gdt = new GestureDetector(new GestureListener());
-        final ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        final GestureDetector swipeDetector = new GestureDetector(new GestureListener());
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(final View view, final MotionEvent event) {
-                gdt.onTouchEvent(event);
+                swipeDetector.onTouchEvent(event);
                 return true;
             }
         });
-
-        if (pageIndex >= book.getPageList().size()) {
-            Button nextPageButton = (Button) findViewById(R.id.nextPage);
-            nextPageButton.setText("Close Book");
-        }
     }
 
     @Override
@@ -209,6 +204,7 @@ public class ReadStoryActivity extends Activity {
         super.onPostCreate(savedInstanceState);
         if (page != null && page.getAudioPath() != null) {
             try {
+                mPlayer = new MediaPlayer();
                 mPlayer.setDataSource(getApplicationContext(), Uri.parse(page.getAudioPath()));
                 mPlayer.prepare();
                 mPlayer.start();
@@ -219,18 +215,6 @@ public class ReadStoryActivity extends Activity {
             // created, to briefly hint to the user that UI controls
             // are available.
             delayedHide(100);
-        }
-    }
-
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void setupActionBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            // Show the Up button in the action bar.
-
-
         }
     }
 
@@ -285,6 +269,8 @@ public class ReadStoryActivity extends Activity {
             intent.putExtra("pageIndex", pageIndex);
             startActivity(intent);
         } else {
+            mPlayer.stop();
+            --pageIndex;
             NavUtils.navigateUpFromSameTask(this);
         }
     }

@@ -1,4 +1,4 @@
-package database;
+package com.palmer.thestoryteller.data;
 
 import java.util.List;
 

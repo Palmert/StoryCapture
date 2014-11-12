@@ -1,4 +1,4 @@
-package com.palmer.thestoryteller;
+package com.palmer.thestoryteller.activities;
 
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
@@ -23,11 +23,14 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
+import com.palmer.thestoryteller.R;
+import com.palmer.thestoryteller.data.Book;
+import com.palmer.thestoryteller.data.BooksDataSource;
+import com.palmer.thestoryteller.helpers.FileHelpers;
+import com.palmer.thestoryteller.helpers.ImageHelpers;
+
 import java.io.IOException;
 import java.util.List;
-
-import database.Book;
-import database.BooksDataSource;
 
 public class BookshelfActivity extends Activity {
 
@@ -125,27 +128,27 @@ public class BookshelfActivity extends Activity {
 
     public void captureImage() {
         intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = Helpers.getOutputMediaFileUri(Helpers.MEDIA_TYPE_IMAGE, this);
+        fileUri = FileHelpers.getOutputMediaFileUri(FileHelpers.MEDIA_TYPE_IMAGE, this);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
         // start the image capture Intent
-        startActivityForResult(intent, Helpers.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        startActivityForResult(intent, FileHelpers.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case Helpers.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE: {
+            case FileHelpers.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE: {
                 if (resultCode == RESULT_OK) {
                     Intent photoPickerIntent = new Intent(Intent.ACTION_EDIT);
                     photoPickerIntent.setDataAndType(fileUri, "image/*");
                     photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
                     photoPickerIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivityForResult(photoPickerIntent, Helpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE);
+                    startActivityForResult(photoPickerIntent, FileHelpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE);
                 }
                 break;
             }
-            case Helpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE: {
+            case FileHelpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE: {
                 Book book = new Book(fileUri.toString());
                 BooksDataSource.data.open();
                 book = BooksDataSource.data.create(book);
@@ -191,7 +194,7 @@ public class BookshelfActivity extends Activity {
                 ImageView imageView = new ImageView(this);
                 Bitmap thumbnail = null;
                 try {
-                    thumbnail = Helpers.getThumbnail(imageUri, this);
+                    thumbnail = ImageHelpers.getThumbnail(imageUri, this);
                     Bitmap standardThumbnail = Bitmap.createScaledBitmap(thumbnail, 185, 275, false);
                     imageView.setImageBitmap(standardThumbnail);
                     imageView.setCropToPadding(true);

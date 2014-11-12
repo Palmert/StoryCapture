@@ -1,4 +1,4 @@
-package com.palmer.thestoryteller;
+package com.palmer.thestoryteller.activities;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -19,13 +19,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.palmer.thestoryteller.util.SystemUiHider;
+import com.palmer.thestoryteller.R;
+import com.palmer.thestoryteller.data.Book;
+import com.palmer.thestoryteller.data.BooksDataSource;
+import com.palmer.thestoryteller.data.Page;
+import com.palmer.thestoryteller.helpers.FileHelpers;
+import com.palmer.thestoryteller.helpers.ImageHelpers;
+import com.palmer.thestoryteller.helpers.SystemUiHider;
 
 import java.io.IOException;
-
-import database.Book;
-import database.BooksDataSource;
-import database.Page;
 
 import static com.palmer.thestoryteller.R.drawable;
 import static com.palmer.thestoryteller.R.id;
@@ -78,8 +80,8 @@ public class CaptureStoryActivity extends Activity {
     private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
     private static String audioPath = null;
-    Handler mHideHandler = new Handler();
-    Runnable mHideRunnable = new Runnable() {
+    private Handler mHideHandler = new Handler();
+    private Runnable mHideRunnable = new Runnable() {
         @Override
         public void run() {
             mSystemUiHider.hide();
@@ -199,7 +201,7 @@ public class CaptureStoryActivity extends Activity {
 
         Bitmap thumbnail = null;
         try {
-            thumbnail = Helpers.getThumbnail(imageUri, this);
+            thumbnail = ImageHelpers.getThumbnail(imageUri, this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -302,40 +304,40 @@ public class CaptureStoryActivity extends Activity {
 
     public void captureImage() {
         intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = Helpers.getOutputMediaFileUri(Helpers.MEDIA_TYPE_IMAGE, this);
+        fileUri = FileHelpers.getOutputMediaFileUri(FileHelpers.MEDIA_TYPE_IMAGE, this);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         // start the image capture Intent
-        startActivityForResult(intent, Helpers.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        startActivityForResult(intent, FileHelpers.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
     public void addAudio(View v) {
         Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivityForResult(intent, Helpers.CAPTURE_PAGE_AUDIO_REQUEST_CODE);
+        startActivityForResult(intent, FileHelpers.CAPTURE_PAGE_AUDIO_REQUEST_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case Helpers.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE: {
+            case FileHelpers.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE: {
                 if (resultCode == RESULT_OK) {
                     Intent photoPickerIntent = new Intent(Intent.ACTION_EDIT);
                     photoPickerIntent.setDataAndType(fileUri, "image/*");
                     photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivityForResult(photoPickerIntent, Helpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE);
+                    startActivityForResult(photoPickerIntent, FileHelpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE);
                 }
                 break;
             }
-            case Helpers.CAPTURE_PAGE_AUDIO_REQUEST_CODE: {
+            case FileHelpers.CAPTURE_PAGE_AUDIO_REQUEST_CODE: {
                 if (resultCode == RESULT_OK) {
                     page.setAudioPath(data.getData().toString());
                 }
                 break;
             }
-            case Helpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE: {
+            case FileHelpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE: {
                 Intent newStoryCapture = new Intent(getApplicationContext(), CaptureStoryActivity.class);
                 newStoryCapture.putExtra("bookId", bookId);
                 newStoryCapture.putExtra("fileUri", fileUri);
@@ -364,7 +366,6 @@ public class CaptureStoryActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        imageView.destroyDrawingCache();
         BooksDataSource.data.close();
     }
 

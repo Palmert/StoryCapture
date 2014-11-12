@@ -1,4 +1,4 @@
-package database;
+package com.palmer.thestoryteller.data;
 
 /**
  * Created by Thom on 11/9/2014.

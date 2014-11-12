@@ -1,4 +1,4 @@
-package com.palmer.thestoryteller.util;
+package com.palmer.thestoryteller.helpers;
 
 import android.app.Activity;
 import android.os.Build;

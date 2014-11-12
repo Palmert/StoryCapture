@@ -1,4 +1,4 @@
-package database;
+package com.palmer.thestoryteller.data;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -42,7 +42,7 @@ public class PagesTable {
 
     public static void onUpgrade(SQLiteDatabase database, int oldVersion,
                                  int newVersion) {
-        Log.w(PagesTable.class.getName(), "Upgrading database from version "
+        Log.w(PagesTable.class.getName(), "Upgrading com.palmer.thestoryteller.database from version "
                 + oldVersion + " to " + newVersion
                 + ", which will destroy all old data");
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_PAGES);

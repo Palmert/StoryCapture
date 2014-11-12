@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.palmer.thestoryteller.BookshelfActivity">
+    tools:context="com.palmer.thestoryteller.activities.BookshelfActivity">
 
     <item
         android:id="@+id/action_manage"

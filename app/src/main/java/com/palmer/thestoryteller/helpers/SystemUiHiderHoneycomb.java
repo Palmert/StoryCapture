@@ -1,4 +1,4 @@
-package com.palmer.thestoryteller.util;
+package com.palmer.thestoryteller.helpers;
 
 import android.annotation.TargetApi;
 import android.app.Activity;

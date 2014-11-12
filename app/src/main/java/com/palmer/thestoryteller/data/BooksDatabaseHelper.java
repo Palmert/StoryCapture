@@ -1,4 +1,4 @@
-package database;
+package com.palmer.thestoryteller.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
