@@ -10,12 +10,15 @@ import android.widget.ImageView;
  */
 public class ImageHelpers {
 
-    public static void loadImageIntoViewAsync(final ScaledBitmapCache bitmapCache, Uri imageUri, ImageView imageView,
-                                              final int width, final int height, Resources resources) {
+    public static void loadImageIntoViewAsync(final ScaledBitmapCache bitmapCache,
+                                              Uri imageUri, ImageView imageView,
+                                              final int width, final int height,
+                                              Resources resources) {
         // check in-memory cache, if found no need for an AsyncTask
         Bitmap bitmap = bitmapCache.getInMemoryScaledBitmap(imageUri, width, height);
         if (bitmap != null) {
             imageView.setImageBitmap(bitmap);
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             return;
         }
         // read from storage with AsyncTask
@@ -26,6 +29,7 @@ public class ImageHelpers {
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             task.execute(imageUri);
         }
+
     }
 
 }
