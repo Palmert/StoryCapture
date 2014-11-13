@@ -1,5 +1,7 @@
 package com.palmer.thestoryteller.data;
 
+import android.net.Uri;
+
 import java.util.List;
 
 /**
@@ -51,6 +53,10 @@ public class Page {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public Uri getImageUri() {
+        return Uri.parse(imagePath);
     }
 
     public List<Sound> getSoundList() {

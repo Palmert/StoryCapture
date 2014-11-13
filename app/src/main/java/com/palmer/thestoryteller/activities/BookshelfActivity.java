@@ -50,7 +50,9 @@ public class BookshelfActivity extends Activity {
 
         bookshelfGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                //TODO open view pager in child mode pass it page collection
+                final Intent i = new Intent(parent.getContext(), ImageDetailActivity.class);
+                i.putExtra(ImageDetailActivity.BOOK_ID, (Long) v.getTag());
+                startActivity(i);
             }
         });
     }

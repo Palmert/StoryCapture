@@ -78,11 +78,13 @@ public class GridViewBookshelf extends GridView {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        int count = getChildCount();
         ImageView imageView = (ImageView) getChildAt(0);
+        int count = getChildCount();
         int top = count < 0 ? getChildAt(0).getTop() : 0;
+
         Bitmap nMutableBackground = BitmapFactory.decodeResource(getResources(), R.drawable.bookshelf);
         Bitmap mutableBackground = convertToMutable(nMutableBackground);
+
         scaledBackground = Bitmap.createScaledBitmap(mutableBackground,
                 getWidth(), imageView.getMeasuredHeight(), false);
 

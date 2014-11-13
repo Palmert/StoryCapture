@@ -64,7 +64,7 @@ public class ImageAdapter extends BaseAdapter {
             imageView.setLayoutParams(new GridView.LayoutParams(250, 350));
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setPadding(35, 50, 35, 35);
-            imageView.setTag(books.get(position));
+            imageView.setTag(books.get(position).getId());
         } else {
             imageView = (ImageView) convertView;
         }
