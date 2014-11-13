@@ -23,6 +23,7 @@ public class ImageHelpers {
             BitmapWorkerTask task = new BitmapWorkerTask(imageView, bitmapCache, width, height);
             AsyncDrawable asyncDrawable = new AsyncDrawable(resources, task);
             imageView.setImageDrawable(asyncDrawable);
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             task.execute(imageUri);
         }
     }

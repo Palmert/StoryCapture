@@ -11,6 +11,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.palmer.thestoryteller.R;
+import com.palmer.thestoryteller.data.Book;
 import com.palmer.thestoryteller.data.BooksDataSource;
 import com.palmer.thestoryteller.data.Page;
 import com.palmer.thestoryteller.fragments.PageDisplayFragment;
@@ -37,9 +38,12 @@ public class StoryPagerActivity extends FragmentActivity {
         if (getIntent().hasExtra(BOOK_ID)) {
             data = new BooksDataSource(this);
             data.open();
+            Book selectedBook = data.findBookById(getIntent().getExtras().getLong(BOOK_ID));
+            selectedBook.getPageList().add(0,
+                    new Page(selectedBook.getId(), selectedBook.getImagePath()));
 
             mAdapter = new ImagePagerAdapter(getSupportFragmentManager(),
-                    data.findAllPages(getIntent().getExtras().getLong(BOOK_ID)), this);
+                    selectedBook.getPageList(), this);
             mPager = (ViewPager) findViewById(R.id.view_pager);
             mPager.setPageTransformer(true, new DepthPageTransformer());
             mPager.setAdapter(mAdapter);

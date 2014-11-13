@@ -19,7 +19,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.BookshelfActivity"
+            android:name="com.palmer.thestoryteller.activities.BookshelfActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,24 +27,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".activities.CaptureStoryActivity"
+            android:name="com.palmer.thestoryteller.activities.CaptureStoryActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:parentActivityName=".activities.BookshelfActivity"
+            android:parentActivityName="com.palmer.thestoryteller.activities.BookshelfActivity"
             android:theme="@style/FullscreenTheme">
             <meta-data
                 android:name="CaptureStoryActivity"
                 android:value="CaptureStoryActivity" />
         </activity>
         <activity
-            android:name=".activities.StoryPagerActivity"
+            android:name="com.palmer.thestoryteller.activities.StoryPagerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:parentActivityName=".activities.BookshelfActivity"
+            android:parentActivityName="com.palmer.thestoryteller.activities.BookshelfActivity"
             android:theme="@style/FullscreenTheme">
             <meta-data
                 android:name="ImageDetailActivity"
                 android:value="ImageDetailActivity" />
+        </activity>
+        <activity
+            android:name=".activities.StoryManagerListActivity"
+            android:label="@string/title_activity_story_manager"
+            android:parentActivityName="com.palmer.thestoryteller.activities.BookshelfActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.palmer.thestoryteller.activities.BookshelfActivity" />
         </activity>
     </application>
 

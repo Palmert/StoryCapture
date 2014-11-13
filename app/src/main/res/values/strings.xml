@@ -12,8 +12,6 @@
     <string name="save_page">Save Page</string>
     <string name="done">Done Book</string>
     <string name="next_page">Next Page</string>
-
-
     <string name="title_activity_story_capture2">StoryCapture2</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
@@ -22,5 +20,7 @@
     <string name="delete">Remove Page</string>
     <string name="add_book">Capture Story</string>
     <string name="deleteBook">Remove Book</string>
+    <string name="title_activity_story_manager">StoryManagerActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
