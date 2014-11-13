@@ -100,6 +100,7 @@ public class CaptureStoryActivity extends Activity {
     private long bookId;
     private int pageIndex;
     private boolean isExistingPage;
+    private BooksDataSource booksDataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +108,8 @@ public class CaptureStoryActivity extends Activity {
 
         setContentView(layout.activity_story_capture);
         setupActionBar();
-
+        booksDataSource = new BooksDataSource(this);
+        booksDataSource.open();
         final View controlsView = findViewById(id.fullscreen_content_controls);
         final View contentView = findViewById(id.imageView);
 
@@ -175,10 +177,10 @@ public class CaptureStoryActivity extends Activity {
 
         if (getIntent().hasExtra("bookId")) {
             bookId = getIntent().getExtras().getLong("bookId");
-            BooksDataSource.data.open();
+            booksDataSource.open();
 
-            book = BooksDataSource.data.findBookById(bookId);
-            imageUri = Uri.parse(book.getImagePath());
+            book = booksDataSource.findBookById(bookId);
+            imageUri = book.getImageUri();
         }
 
         if (getIntent().hasExtra("pageIndex")) {
@@ -265,8 +267,8 @@ public class CaptureStoryActivity extends Activity {
             NavUtils.navigateUpFromSameTask(this);
             return true;
         } else if (id == R.id.action_delete) {
-            BooksDataSource.data.open();
-            BooksDataSource.data.deletePage(page.getId());
+            booksDataSource.open();
+            booksDataSource.deletePage(page.getId());
             --pageIndex;
             this.recreate();
         }
@@ -287,10 +289,10 @@ public class CaptureStoryActivity extends Activity {
     }
 
     public void moveToNextPage() {
-        BooksDataSource.data.open();
+        booksDataSource.open();
         if (pageIndex < book.getPageList().size() - 1) {
             if (page != null) {
-                BooksDataSource.data.update(page);
+                booksDataSource.update(page);
             }
             intent = new Intent(getApplicationContext(), CaptureStoryActivity.class);
             intent.putExtra("bookId", bookId);
@@ -299,7 +301,7 @@ public class CaptureStoryActivity extends Activity {
             startActivity(intent);
         } else {
             if (page != null) {
-                page = BooksDataSource.data.create(page);
+                page = booksDataSource.create(page);
             }
             captureImage();
         }
@@ -355,20 +357,20 @@ public class CaptureStoryActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        BooksDataSource.data.open();
+        booksDataSource.open();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        BooksDataSource.data.close();
+        booksDataSource.close();
     }
 
     public void savePage(View view) {
-        BooksDataSource.data.open();
+        booksDataSource.open();
         if (pageIndex < book.getPageList().size() - 1) {
             if (page != null) {
-                BooksDataSource.data.update(page);
+                booksDataSource.update(page);
             }
             intent = new Intent(getApplicationContext(), CaptureStoryActivity.class);
             intent.putExtra("bookId", bookId);
@@ -377,7 +379,7 @@ public class CaptureStoryActivity extends Activity {
             startActivity(intent);
         } else {
             if (page != null) {
-                page = BooksDataSource.data.create(page);
+                page = booksDataSource.create(page);
             }
         }
         NavUtils.navigateUpFromSameTask(this);

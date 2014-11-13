@@ -13,7 +13,6 @@ import java.util.List;
 public class BooksDataSource {
 
     public static final String LOGTAG = "BOOKS DB";
-    public static BooksDataSource data;
     private SQLiteOpenHelper booksDbHelper;
     private SQLiteDatabase booksDB;
 

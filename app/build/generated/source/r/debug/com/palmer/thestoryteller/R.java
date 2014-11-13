@@ -26,35 +26,34 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
-        public static final int book1=0x7f020000;
-        public static final int bookshelf=0x7f020001;
-        public static final int ic_action_copy=0x7f020002;
-        public static final int ic_action_delete=0x7f020003;
-        public static final int ic_action_done=0x7f020004;
-        public static final int ic_action_microphone=0x7f020005;
-        public static final int ic_action_new_picture=0x7f020006;
-        public static final int ic_action_photo=0x7f020007;
-        public static final int ic_launcher=0x7f020008;
+        public static final int bookshelf=0x7f020000;
+        public static final int ic_action_copy=0x7f020001;
+        public static final int ic_action_delete=0x7f020002;
+        public static final int ic_action_done=0x7f020003;
+        public static final int ic_action_microphone=0x7f020004;
+        public static final int ic_action_new_picture=0x7f020005;
+        public static final int ic_action_photo=0x7f020006;
+        public static final int ic_launcher=0x7f020007;
     }
     public static final class id {
-        public static final int action_delete=0x7f09000c;
-        public static final int action_deleteBook=0x7f090009;
-        public static final int action_manage=0x7f09000a;
-        public static final int action_view=0x7f09000b;
-        public static final int addAudio=0x7f090007;
-        public static final int addBook=0x7f090002;
-        public static final int addPage=0x7f090008;
-        public static final int fullscreen_content_controls=0x7f090004;
-        public static final int imageView=0x7f090003;
-        public static final int nextPage=0x7f090005;
-        public static final int savePage=0x7f090006;
-        public static final int sclView=0x7f090000;
-        public static final int tblLayout=0x7f090001;
+        public static final int action_delete=0x7f09000b;
+        public static final int action_deleteBook=0x7f090008;
+        public static final int action_manage=0x7f090009;
+        public static final int action_view=0x7f09000a;
+        public static final int addAudio=0x7f090006;
+        public static final int addBook=0x7f090001;
+        public static final int addPage=0x7f090007;
+        public static final int bookshelfGrid=0x7f090000;
+        public static final int fullscreen_content_controls=0x7f090003;
+        public static final int imageView=0x7f090002;
+        public static final int nextPage=0x7f090004;
+        public static final int savePage=0x7f090005;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
-        public static final int activity_read_story=0x7f030001;
-        public static final int activity_story_capture=0x7f030002;
+        public static final int activity_bookshelf=0x7f030000;
+        public static final int activity_main=0x7f030001;
+        public static final int activity_read_story=0x7f030002;
+        public static final int activity_story_capture=0x7f030003;
     }
     public static final class menu {
         public static final int book_long_press=0x7f080000;

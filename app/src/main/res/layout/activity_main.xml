@@ -3,20 +3,15 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <ScrollView
-        android:id="@+id/sclView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+    <com.palmer.thestoryteller.helpers.GridViewBookshelf xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/bookshelfGrid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnWidth="100dp"
+        android:gravity="center"
+        android:numColumns="auto_fit">
 
-        <TableLayout
-            android:id="@+id/tblLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="0dp">
-
-        </TableLayout>
-
-    </ScrollView>
+    </com.palmer.thestoryteller.helpers.GridViewBookshelf>
 
     <Button
         android:id="@+id/addBook"
@@ -34,7 +29,4 @@
         android:text="@string/add_book"
         android:textColor="#ffffffff" />
 
-    <GridLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"></GridLayout>
 </RelativeLayout>

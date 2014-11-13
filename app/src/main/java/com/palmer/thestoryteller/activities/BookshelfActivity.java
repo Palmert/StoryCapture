@@ -1,11 +1,9 @@
 package com.palmer.thestoryteller.activities;
 
-import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,36 +13,27 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import android.widget.GridView;
 
 import com.palmer.thestoryteller.R;
+import com.palmer.thestoryteller.adapters.ImageAdapter;
 import com.palmer.thestoryteller.data.Book;
 import com.palmer.thestoryteller.data.BooksDataSource;
 import com.palmer.thestoryteller.helpers.FileHelpers;
-import com.palmer.thestoryteller.helpers.ImageHelpers;
-
-import java.io.IOException;
-import java.util.List;
 
 public class BookshelfActivity extends Activity {
 
-
-    private static final int BOOKS_PER_ROW = 3;
-    private static final int SHELVES_PER_SCREEN = 5;
     private static boolean canEdit;
-    public List<Book> booksList;
     private Button addBookBtn;
     private MenuItem viewMenuItem;
     private MenuItem manageMenuItem;
     private Intent intent;
     private Uri fileUri;
     private long bookToDelete;
+    private BooksDataSource booksDataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +43,16 @@ public class BookshelfActivity extends Activity {
         addBookBtn = (Button) findViewById(R.id.addBook);
         addBookBtn.setVisibility(canEdit ? View.VISIBLE : View.INVISIBLE);
 
-        BooksDataSource.data = new BooksDataSource(this);
-        buildBookShelf();
+        booksDataSource = new BooksDataSource(this);
+        booksDataSource.open();
+        GridView bookshelfGrid = (GridView) findViewById(R.id.bookshelfGrid);
+        bookshelfGrid.setAdapter(new ImageAdapter(this, booksDataSource.findAllBooks()));
+
+        bookshelfGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                //TODO open view pager in child mode pass it page collection
+            }
+        });
     }
 
     @Override
@@ -150,8 +147,8 @@ public class BookshelfActivity extends Activity {
             }
             case FileHelpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE: {
                 Book book = new Book(fileUri.toString());
-                BooksDataSource.data.open();
-                book = BooksDataSource.data.create(book);
+                booksDataSource.open();
+                book = booksDataSource.create(book);
                 Intent newStoryCapture = new Intent(getApplicationContext(), CaptureStoryActivity.class);
                 newStoryCapture.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 newStoryCapture.putExtra("bookId", book.getId());
@@ -164,77 +161,13 @@ public class BookshelfActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        BooksDataSource.data.open();
+        booksDataSource.open();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        BooksDataSource.data.close();
-    }
-
-    protected void buildBookShelf() {
-        BooksDataSource.data.open();
-        booksList = BooksDataSource.data.findAllBooks();
-
-        for (int bookIndex = 0, rowIndex = 0; bookIndex < booksList.size() || rowIndex < SHELVES_PER_SCREEN; rowIndex++) {
-            TableLayout tblLayout = (TableLayout) findViewById(R.id.tblLayout);
-
-            TableRow tblRow = new TableRow(this);
-            tblRow.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-                    LayoutParams.MATCH_PARENT));
-            tblRow.setMinimumWidth(getWindowManager().getDefaultDisplay().getWidth());
-            tblRow.setMinimumHeight(getWindowManager().getDefaultDisplay().getHeight() / SHELVES_PER_SCREEN);
-            tblRow.setBackgroundResource(R.drawable.bookshelf);
-
-            for (int j = 0; j < BOOKS_PER_ROW && bookIndex < booksList.size(); j++, bookIndex++) {
-                Book book = booksList.get(bookIndex);
-                Uri imageUri = Uri.parse(book.getImagePath());
-
-                ImageView imageView = new ImageView(this);
-                Bitmap thumbnail = null;
-                try {
-                    thumbnail = ImageHelpers.getThumbnail(imageUri, this);
-                    Bitmap standardThumbnail = Bitmap.createScaledBitmap(thumbnail, 185, 275, false);
-                    imageView.setImageBitmap(standardThumbnail);
-                    imageView.setCropToPadding(true);
-                    imageView.setPadding(30, 30, 30, 40);
-                    imageView.setHapticFeedbackEnabled(true);
-                    imageView.setTag(book.getId());
-                    registerForContextMenu(imageView);
-                    imageView.setOnClickListener(new OnClickListener() {
-
-                        @Override
-                        public void onClick(View v) {
-                            long bookId = (Long) v.getTag();
-                            if (canEdit) {
-                                Intent editStory = new Intent(getApplicationContext(), CaptureStoryActivity.class);
-                                editStory.putExtra("bookId", bookId);
-                                startActivity(editStory);
-                            } else {
-                                intent = new Intent(getApplicationContext(), ReadStoryActivity.class);
-                                intent.putExtra("bookId", bookId);
-                                startActivity(intent);
-                            }
-
-                        }
-                    });
-
-                    imageView.setOnLongClickListener(new View.OnLongClickListener() {
-
-                        @Override
-                        public boolean onLongClick(View v) {
-                            return false;
-                        }
-                    });
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                tblRow.addView(imageView, j);
-            }
-            tblLayout.addView(tblRow, rowIndex);
-        }
+        booksDataSource.close();
     }
 
     @Override
@@ -254,7 +187,7 @@ public class BookshelfActivity extends Activity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.action_deleteBook: {
-                BooksDataSource.data.deleteBook(bookToDelete);
+                booksDataSource.deleteBook(bookToDelete);
                 this.recreate();
             }
             default:

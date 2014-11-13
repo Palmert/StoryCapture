@@ -1,5 +1,7 @@
 package com.palmer.thestoryteller.data;
 
+import android.net.Uri;
+
 import java.util.List;
 
 /**
@@ -21,6 +23,10 @@ public class Book {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Uri getImageUri() {
+        return Uri.parse(imagePath);
     }
 
     public String getImagePath() {

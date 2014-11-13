@@ -93,13 +93,15 @@ public class ReadStoryActivity extends Activity {
     private Book book;
     private MediaPlayer mPlayer;
     private Uri imageUri;
+    private BooksDataSource booksDataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_read_story);
-
+        booksDataSource = new BooksDataSource(this);
+        booksDataSource.open();
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.imageView);
 
@@ -161,9 +163,9 @@ public class ReadStoryActivity extends Activity {
 
         if (getIntent().hasExtra("bookId")) {
             bookId = (Long) getIntent().getExtras().get("bookId");
-            BooksDataSource.data.open();
-            book = BooksDataSource.data.findBookById(bookId);
-            imageUri = Uri.parse(book.getImagePath());
+            booksDataSource.open();
+            book = booksDataSource.findBookById(bookId);
+            imageUri = book.getImageUri();
         }
 
         if (getIntent().hasExtra("pageIndex")) {
@@ -241,13 +243,13 @@ public class ReadStoryActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        BooksDataSource.data.open();
+        booksDataSource.open();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        BooksDataSource.data.close();
+        booksDataSource.close();
     }
 
     @Override
