@@ -38,15 +38,6 @@
                 android:value="CaptureStoryActivity" />
         </activity>
         <activity
-            android:name=".activities.ReadStoryActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:parentActivityName=".activities.BookshelfActivity"
-            android:theme="@style/FullscreenTheme">
-            <meta-data
-                android:name="ReadStoryActivity"
-                android:value="ReadStoryActivity" />
-        </activity>
-        <activity
             android:name=".activities.ImageDetailActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:parentActivityName=".activities.BookshelfActivity"

@@ -11,8 +11,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.palmer.thestoryteller.data.Book;
-import com.palmer.thestoryteller.helpers.AsyncImageLoader;
 import com.palmer.thestoryteller.helpers.FileHelpers;
+import com.palmer.thestoryteller.helpers.ImageHelpers;
 import com.palmer.thestoryteller.helpers.ScaledBitmapCache;
 
 import java.util.List;
@@ -25,14 +25,12 @@ public class ImageAdapter extends BaseAdapter {
     private final int cellHeight;
     private Context mContext;
     private List<Book> books;
-    private AsyncImageLoader asyncImageLoader;
     private ScaledBitmapCache scaledBitmapCache;
 
 
     public ImageAdapter(Context mContext, List<Book> books) {
         this.mContext = mContext;
         this.books = books;
-        this.asyncImageLoader = new AsyncImageLoader();
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point displaySize = new Point();
@@ -69,7 +67,7 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        asyncImageLoader.loadImageIntoViewAsync(scaledBitmapCache,
+        ImageHelpers.loadImageIntoViewAsync(scaledBitmapCache,
                 books.get(position).getImageUri(), imageView,
                 this.cellWidth, this.cellHeight, mContext.getResources());
         return imageView;

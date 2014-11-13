@@ -1,9 +1,8 @@
 package com.palmer.thestoryteller.helpers;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
@@ -12,61 +11,54 @@ import java.lang.ref.WeakReference;
 /**
  * Created by Thom on 11/12/2014.
  */
-public class BitmapWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
-    private final WeakReference<ImageView> imageViewReference;
-    public int data = 0;
-    protected Context mContext;
+public class BitmapWorkerTask extends AsyncTask<Uri, Void, Bitmap> {
+    WeakReference<ImageView> imageViewReference;
+    Uri data = null;
+    ScaledBitmapCache bitmapCache;
+    int width;
+    int height;
 
-    public BitmapWorkerTask(ImageView imageView, Context mContext) {
+    public BitmapWorkerTask(ImageView imageView, ScaledBitmapCache bitmapCache, int width, int height) {
         // Use a WeakReference to ensure the ImageView can be garbage collected
-        imageViewReference = new WeakReference<ImageView>(imageView);
-        this.mContext = mContext;
+        imageViewReference = new WeakReference(imageView);
+        this.bitmapCache = bitmapCache;
+        this.width = width;
+        this.height = height;
     }
 
-    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-                                                         int reqWidth, int reqHeight) {
-
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(res, resId, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(res, resId, options);
-    }
-
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
+    private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+        if (imageView != null) {
+            final Drawable drawable = imageView.getDrawable();
+            if (drawable instanceof AsyncDrawable) {
+                final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
+                return asyncDrawable.getBitmapWorkerTask();
             }
         }
+        return null;
+    }
 
-        return inSampleSize;
+    public static boolean cancelPotentialWork(Uri uri, ImageView imageView) {
+        final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+
+        if (bitmapWorkerTask != null) {
+            final Uri taskUri = bitmapWorkerTask.data;
+            if (!uri.equals(taskUri)) {
+                // Cancel previous task
+                bitmapWorkerTask.cancel(true);
+            } else {
+                // The same work is already in progress
+                return false;
+            }
+        }
+        // No task associated with the ImageView, or an existing task was cancelled
+        return true;
     }
 
     // Decode image in background.
     @Override
-    protected Bitmap doInBackground(Integer... params) {
-        data = params[0];
-        return decodeSampledBitmapFromResource(mContext.getResources(), data, 100, 100);
+    protected Bitmap doInBackground(Uri... args) {
+        data = args[0];
+        return bitmapCache.getScaledBitmap(args[0], width, height);
     }
 
     // Once complete, see if ImageView is still around and set bitmap.
@@ -79,4 +71,5 @@ public class BitmapWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
             }
         }
     }
+
 }

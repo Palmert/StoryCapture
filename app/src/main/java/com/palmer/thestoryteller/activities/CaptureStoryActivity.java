@@ -23,10 +23,7 @@ import com.palmer.thestoryteller.data.Book;
 import com.palmer.thestoryteller.data.BooksDataSource;
 import com.palmer.thestoryteller.data.Page;
 import com.palmer.thestoryteller.helpers.FileHelpers;
-import com.palmer.thestoryteller.helpers.ImageHelpers;
 import com.palmer.thestoryteller.helpers.SystemUiHider;
-
-import java.io.IOException;
 
 import static com.palmer.thestoryteller.R.drawable;
 import static com.palmer.thestoryteller.R.id;
@@ -212,11 +209,7 @@ public class CaptureStoryActivity extends Activity {
         imageView = (ImageView) findViewById(id.imageView);
 
         Bitmap thumbnail = null;
-        try {
-            thumbnail = ImageHelpers.getThumbnail(imageUri, this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//TODO RESTRUCTURE THIS ACTIVITY
         imageView.setImageBitmap(thumbnail);
 
         final GestureDetector swipeDetector = new GestureDetector(new GestureListener());
