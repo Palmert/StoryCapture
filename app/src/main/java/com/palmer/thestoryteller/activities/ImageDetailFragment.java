@@ -14,9 +14,7 @@ import com.palmer.thestoryteller.data.Page;
  * Created by Thom on 11/12/2014.
  */
 public class ImageDetailFragment extends Fragment {
-    private static final String IMAGE_PATH = "imagePath";
-    private static final String AUDIO_PATH = "audioPath";
-    private static final String PAGE_ID = "pageId";
+
     private ImageView mImageView;
     private Page page;
 
@@ -24,22 +22,15 @@ public class ImageDetailFragment extends Fragment {
     public ImageDetailFragment() {
     }
 
-    static ImageDetailFragment newInstance(Page page, int pageId) {
-        final ImageDetailFragment f = new ImageDetailFragment();
-        final Bundle args = new Bundle();
-        args.putInt(PAGE_ID, pageId);
-        args.putString(IMAGE_PATH, page.getImagePath());
-        args.putString(AUDIO_PATH, page.getAudioPath());
-        f.setArguments(args);
+    static ImageDetailFragment newInstance() {
+        ImageDetailFragment f = new ImageDetailFragment();
+        ;
         return f;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        page = new Page();
-        page.setImagePath(getArguments().getString(IMAGE_PATH));
-        page.setAudioPath(getArguments().getString(AUDIO_PATH));
     }
 
     @Override
@@ -55,5 +46,9 @@ public class ImageDetailFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mImageView.setImageURI(page.getImageUri());
+    }
+
+    public void setPage(Page page) {
+        this.page = page;
     }
 }

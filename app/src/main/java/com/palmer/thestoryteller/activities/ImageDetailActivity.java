@@ -52,7 +52,9 @@ public class ImageDetailActivity extends FragmentActivity {
 
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
-            return ImageDetailFragment.newInstance(pages.get(position), position);
+            ImageDetailFragment f = ImageDetailFragment.newInstance();
+            f.setPage(pages.get(position));
+            return f;
         }
     }
 }
