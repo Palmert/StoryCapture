@@ -38,7 +38,7 @@
                 android:value="CaptureStoryActivity" />
         </activity>
         <activity
-            android:name=".activities.ImageDetailActivity"
+            android:name=".activities.StoryPagerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:parentActivityName=".activities.BookshelfActivity"
             android:theme="@style/FullscreenTheme">

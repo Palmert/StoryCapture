@@ -12,11 +12,11 @@ import java.lang.ref.WeakReference;
  * Created by Thom on 11/12/2014.
  */
 public class BitmapWorkerTask extends AsyncTask<Uri, Void, Bitmap> {
-    WeakReference<ImageView> imageViewReference;
-    Uri data = null;
-    ScaledBitmapCache bitmapCache;
-    int width;
-    int height;
+    private WeakReference<ImageView> imageViewReference;
+    private Uri data = null;
+    private ScaledBitmapCache bitmapCache;
+    private int width;
+    private int height;
 
     public BitmapWorkerTask(ImageView imageView, ScaledBitmapCache bitmapCache, int width, int height) {
         // Use a WeakReference to ensure the ImageView can be garbage collected

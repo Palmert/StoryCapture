@@ -1,4 +1,4 @@
-package com.palmer.thestoryteller.activities;
+package com.palmer.thestoryteller.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,7 +15,7 @@ import com.palmer.thestoryteller.helpers.ScaledBitmapCache;
 /**
  * Created by Thom on 11/12/2014.
  */
-public class ImageDetailFragment extends Fragment {
+public class PageDisplayFragment extends Fragment {
 
     private ImageView mImageView;
     private Page page;
@@ -24,11 +24,11 @@ public class ImageDetailFragment extends Fragment {
     private int imageHeight;
 
     // Empty constructor, required as per Fragment docs
-    public ImageDetailFragment() {
+    public PageDisplayFragment() {
     }
 
-    static ImageDetailFragment newInstance() {
-        ImageDetailFragment f = new ImageDetailFragment();
+    public static PageDisplayFragment newInstance() {
+        PageDisplayFragment f = new PageDisplayFragment();
         return f;
     }
 

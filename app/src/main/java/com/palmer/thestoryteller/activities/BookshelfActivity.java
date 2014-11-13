@@ -50,8 +50,8 @@ public class BookshelfActivity extends Activity {
 
         bookshelfGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                final Intent i = new Intent(parent.getContext(), ImageDetailActivity.class);
-                i.putExtra(ImageDetailActivity.BOOK_ID, (Long) v.getTag());
+                final Intent i = new Intent(parent.getContext(), StoryPagerActivity.class);
+                i.putExtra(StoryPagerActivity.BOOK_ID, (Long) v.getTag());
                 startActivity(i);
             }
         });

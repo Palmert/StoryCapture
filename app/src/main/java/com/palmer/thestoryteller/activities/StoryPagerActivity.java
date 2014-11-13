@@ -13,6 +13,8 @@ import android.view.WindowManager;
 import com.palmer.thestoryteller.R;
 import com.palmer.thestoryteller.data.BooksDataSource;
 import com.palmer.thestoryteller.data.Page;
+import com.palmer.thestoryteller.fragments.PageDisplayFragment;
+import com.palmer.thestoryteller.helpers.DepthPageTransformer;
 import com.palmer.thestoryteller.helpers.FileHelpers;
 import com.palmer.thestoryteller.helpers.ScaledBitmapCache;
 
@@ -21,7 +23,7 @@ import java.util.List;
 /**
  * Created by Thom on 11/12/2014.
  */
-public class ImageDetailActivity extends FragmentActivity {
+public class StoryPagerActivity extends FragmentActivity {
     public static final String BOOK_ID = "bookId";
 
     private ImagePagerAdapter mAdapter;
@@ -39,6 +41,7 @@ public class ImageDetailActivity extends FragmentActivity {
             mAdapter = new ImagePagerAdapter(getSupportFragmentManager(),
                     data.findAllPages(getIntent().getExtras().getLong(BOOK_ID)), this);
             mPager = (ViewPager) findViewById(R.id.view_pager);
+            mPager.setPageTransformer(true, new DepthPageTransformer());
             mPager.setAdapter(mAdapter);
         }
     }
@@ -60,7 +63,7 @@ public class ImageDetailActivity extends FragmentActivity {
 
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
-            ImageDetailFragment f = ImageDetailFragment.newInstance();
+            PageDisplayFragment f = PageDisplayFragment.newInstance();
             f.setPage(pages.get(position));
             f.setScaledBitmapCache(new ScaledBitmapCache(mContext,
                     ScaledBitmapCache.createFixedDirectoryLocator(
