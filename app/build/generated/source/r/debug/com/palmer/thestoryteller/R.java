@@ -54,13 +54,12 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int view_pager=0x7f090009;
     }
     public static final class layout {
-        public static final int activity_bookshelf=0x7f030000;
-        public static final int activity_main=0x7f030001;
-        public static final int activity_read_story=0x7f030002;
-        public static final int activity_story_capture=0x7f030003;
-        public static final int activity_story_manager=0x7f030004;
-        public static final int image_detail_fragment=0x7f030005;
-        public static final int image_detail_pager=0x7f030006;
+        public static final int activity_main=0x7f030000;
+        public static final int activity_read_story=0x7f030001;
+        public static final int activity_story_capture=0x7f030002;
+        public static final int activity_story_manager=0x7f030003;
+        public static final int image_detail_fragment=0x7f030004;
+        public static final int image_detail_pager=0x7f030005;
     }
     public static final class menu {
         public static final int book_long_press=0x7f080000;

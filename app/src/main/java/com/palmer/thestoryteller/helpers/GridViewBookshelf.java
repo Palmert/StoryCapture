@@ -15,10 +15,15 @@ import com.palmer.thestoryteller.R;
  */
 public class GridViewBookshelf extends GridView {
 
+    private BitmapCache bitmapCache;
+
     public GridViewBookshelf(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
+    public void setBitmapCache(BitmapCache bitmapCache) {
+        this.bitmapCache = bitmapCache;
+    }
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
@@ -26,7 +31,6 @@ public class GridViewBookshelf extends GridView {
         int count = getChildCount();
         int top = count > 0 ? getChildAt(0).getTop() : 0;
 
-        BitmapCache bitmapCache = new BitmapCache();
         Bitmap scaledBookshelfRow = bitmapCache.getScaledBitmap(R.drawable.bookshelf,
                 getResources(), getWidth(),
                 imageView.getMeasuredHeight());

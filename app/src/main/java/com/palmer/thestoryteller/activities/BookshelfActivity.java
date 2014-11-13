@@ -16,13 +16,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 
 import com.palmer.thestoryteller.R;
 import com.palmer.thestoryteller.adapters.ImageAdapter;
 import com.palmer.thestoryteller.data.Book;
 import com.palmer.thestoryteller.data.BooksDataSource;
+import com.palmer.thestoryteller.helpers.BitmapCache;
 import com.palmer.thestoryteller.helpers.FileHelpers;
+import com.palmer.thestoryteller.helpers.GridViewBookshelf;
 
 public class BookshelfActivity extends Activity {
 
@@ -45,7 +46,8 @@ public class BookshelfActivity extends Activity {
 
         booksDataSource = new BooksDataSource(this);
         booksDataSource.open();
-        GridView bookshelfGrid = (GridView) findViewById(R.id.bookshelfGrid);
+        GridViewBookshelf bookshelfGrid = (GridViewBookshelf) findViewById(R.id.bookshelfGrid);
+        bookshelfGrid.setBitmapCache(new BitmapCache());
         bookshelfGrid.setAdapter(new ImageAdapter(this, booksDataSource.findAllBooks()));
 
         bookshelfGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
