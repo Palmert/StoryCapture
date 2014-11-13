@@ -2,6 +2,7 @@
 
 <GridView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/bookshelfGrid"
+    style="@style/Theme.Shelves"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 

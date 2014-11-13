@@ -27,13 +27,14 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
     }
     public static final class drawable {
         public static final int bookshelf=0x7f020000;
-        public static final int ic_action_copy=0x7f020001;
-        public static final int ic_action_delete=0x7f020002;
-        public static final int ic_action_done=0x7f020003;
-        public static final int ic_action_microphone=0x7f020004;
-        public static final int ic_action_new_picture=0x7f020005;
-        public static final int ic_action_photo=0x7f020006;
-        public static final int ic_launcher=0x7f020007;
+        public static final int bookshelf_row=0x7f020001;
+        public static final int ic_action_copy=0x7f020002;
+        public static final int ic_action_delete=0x7f020003;
+        public static final int ic_action_done=0x7f020004;
+        public static final int ic_action_microphone=0x7f020005;
+        public static final int ic_action_new_picture=0x7f020006;
+        public static final int ic_action_photo=0x7f020007;
+        public static final int ic_launcher=0x7f020008;
     }
     public static final class id {
         public static final int action_delete=0x7f09000d;
@@ -105,8 +106,10 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int AppTheme=0x7f070001;
         public static final int ButtonBar=0x7f070002;
         public static final int ButtonBarButton=0x7f070003;
-        public static final int FullscreenActionBarStyle=0x7f070005;
+        public static final int FullscreenActionBarStyle=0x7f070007;
         public static final int FullscreenTheme=0x7f070004;
+        public static final int Theme_NoBackground=0x7f070005;
+        public static final int Theme_Shelves=0x7f070006;
     }
     public static final class styleable {
         /** Attributes that can be used with a ButtonBarContainerTheme.
