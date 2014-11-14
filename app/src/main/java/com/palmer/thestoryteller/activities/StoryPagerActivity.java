@@ -1,25 +1,17 @@
 package com.palmer.thestoryteller.activities;
 
-import android.content.Context;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Display;
-import android.view.WindowManager;
 
 import com.palmer.thestoryteller.R;
+import com.palmer.thestoryteller.adapters.BookPagerAdapter;
 import com.palmer.thestoryteller.data.Book;
 import com.palmer.thestoryteller.data.BooksDataSource;
 import com.palmer.thestoryteller.data.Page;
-import com.palmer.thestoryteller.fragments.PageDisplayFragment;
 import com.palmer.thestoryteller.helpers.DepthPageTransformer;
 import com.palmer.thestoryteller.helpers.FileHelpers;
 import com.palmer.thestoryteller.helpers.ScaledBitmapCache;
-
-import java.util.List;
 
 /**
  * Created by Thom on 11/12/2014.
@@ -27,14 +19,17 @@ import java.util.List;
 public class StoryPagerActivity extends FragmentActivity {
     public static final String BOOK_ID = "bookId";
 
-    private ImagePagerAdapter mAdapter;
+    private BookPagerAdapter mAdapter;
     private ViewPager mPager;
     private BooksDataSource data;
+    private ScaledBitmapCache scaledBitmapCache;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.image_detail_pager); // Contains just a ViewPager
+        setContentView(R.layout.activity_story_reader); // Contains just a ViewPager
+        getActionBar().setDisplayShowTitleEnabled(false);
+
         if (getIntent().hasExtra(BOOK_ID)) {
             data = new BooksDataSource(this);
             data.open();
@@ -42,43 +37,17 @@ public class StoryPagerActivity extends FragmentActivity {
             selectedBook.getPageList().add(0,
                     new Page(selectedBook.getId(), selectedBook.getImagePath()));
 
-            mAdapter = new ImagePagerAdapter(getSupportFragmentManager(),
-                    selectedBook.getPageList(), this);
+            scaledBitmapCache = new ScaledBitmapCache(this,
+                    ScaledBitmapCache.createFixedDirectoryLocator(
+                            FileHelpers.getOutputMediaFileUri(FileHelpers.MEDIA_TYPE_IMAGE, this).toString()));
+
+            mAdapter = new BookPagerAdapter(getSupportFragmentManager(),
+                    selectedBook.getPageList(), this, scaledBitmapCache);
             mPager = (ViewPager) findViewById(R.id.view_pager);
             mPager.setPageTransformer(true, new DepthPageTransformer());
             mPager.setAdapter(mAdapter);
         }
     }
 
-    public static class ImagePagerAdapter extends FragmentStatePagerAdapter {
-        private final List<Page> pages;
-        private Context mContext;
 
-        public ImagePagerAdapter(FragmentManager fm, List<Page> pages, Context mContext) {
-            super(fm);
-            this.pages = pages;
-            this.mContext = mContext;
-        }
-
-        @Override
-        public int getCount() {
-            return this.pages.size();
-        }
-
-        @Override
-        public android.support.v4.app.Fragment getItem(int position) {
-            PageDisplayFragment f = PageDisplayFragment.newInstance();
-            f.setPage(pages.get(position));
-            f.setScaledBitmapCache(new ScaledBitmapCache(mContext,
-                    ScaledBitmapCache.createFixedDirectoryLocator(
-                            FileHelpers.getOutputMediaFileUri(FileHelpers.MEDIA_TYPE_IMAGE, mContext).toString())));
-            WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-            Display display = wm.getDefaultDisplay();
-            Point displaySize = new Point();
-            display.getSize(displaySize);
-            f.setImageWidth(displaySize.x);
-            f.setImageHeight(displaySize.y);
-            return f;
-        }
-    }
 }

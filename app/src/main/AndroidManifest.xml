@@ -46,7 +46,7 @@
                 android:value="ImageDetailActivity" />
         </activity>
         <activity
-            android:name=".activities.StoryManagerListActivity"
+            android:name=".activities.StoryManagerActivity"
             android:label="@string/title_activity_story_manager"
             android:parentActivityName="com.palmer.thestoryteller.activities.BookshelfActivity">
             <meta-data

@@ -27,7 +27,7 @@ import com.palmer.thestoryteller.helpers.GridViewBookshelf;
 
 public class BookshelfActivity extends Activity {
 
-    private static boolean canEdit;
+    private static boolean canEdit = true;
     private Button addBookBtn;
     private MenuItem viewMenuItem;
     private MenuItem manageMenuItem;
@@ -40,6 +40,7 @@ public class BookshelfActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getActionBar().setDisplayShowTitleEnabled(false);
 
         addBookBtn = (Button) findViewById(R.id.addBook);
         addBookBtn.setVisibility(canEdit ? View.VISIBLE : View.INVISIBLE);
@@ -52,7 +53,8 @@ public class BookshelfActivity extends Activity {
 
         bookshelfGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                final Intent i = new Intent(parent.getContext(), StoryPagerActivity.class);
+                final Intent i = new Intent(parent.getContext(), BookshelfActivity.canEdit ?
+                        StoryManagerActivity.class : StoryPagerActivity.class);
                 i.putExtra(StoryPagerActivity.BOOK_ID, (Long) v.getTag());
                 startActivity(i);
             }

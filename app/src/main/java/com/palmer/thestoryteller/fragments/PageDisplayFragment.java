@@ -41,7 +41,7 @@ public class PageDisplayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // image_detail_fragment.xml contains just an ImageView
-        final View v = inflater.inflate(R.layout.image_detail_fragment, container, false);
+        final View v = inflater.inflate(R.layout.fragment_story_page, container, false);
         mImageView = (ImageView) v.findViewById(R.id.imageView);
         return v;
     }

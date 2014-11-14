@@ -22,5 +22,7 @@
     <string name="deleteBook">Remove Book</string>
     <string name="title_activity_story_manager">StoryManagerActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="drawer_open"></string>
+    <string name="drawer_close"></string>
 
 </resources>

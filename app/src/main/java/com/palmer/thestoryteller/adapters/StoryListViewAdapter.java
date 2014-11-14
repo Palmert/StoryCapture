@@ -1,12 +1,16 @@
 package com.palmer.thestoryteller.adapters;
 
 import android.content.Context;
-import android.database.DataSetObserver;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 
-import com.palmer.thestoryteller.data.Book;
+import com.palmer.thestoryteller.R;
+import com.palmer.thestoryteller.data.Page;
+import com.palmer.thestoryteller.helpers.ImageHelpers;
+import com.palmer.thestoryteller.helpers.ScaledBitmapCache;
 
 import java.util.List;
 
@@ -14,70 +18,32 @@ import java.util.List;
 /**
  * Created by Thom on 11/13/2014.
  */
-public class StoryListViewAdapter extends ArrayAdapter {
-    private List<Book> books;
+public class StoryListViewAdapter extends ArrayAdapter<Page> {
 
-    public StoryListViewAdapter(Context context, int resource, List<Book> books) {
-        super(context, resource, books);
+    private ScaledBitmapCache scaledBitmapCache;
+
+    public StoryListViewAdapter(Context context, int resource, List<Page> pages, ScaledBitmapCache scaledBitmapCache) {
+        super(context, resource, pages);
+        this.scaledBitmapCache = scaledBitmapCache;
     }
-
-    @Override
-    public boolean areAllItemsEnabled() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
-        return false;
-    }
-
-    @Override
-    public void registerDataSetObserver(DataSetObserver observer) {
-
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver observer) {
-
-    }
-
-    @Override
-    public int getCount() {
-        return 0;
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return null;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return false;
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
-    }
+        Page page = getItem(position);
 
-    @Override
-    public int getItemViewType(int position) {
-        return 0;
-    }
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_page, parent, false);
+        }
 
-    @Override
-    public int getViewTypeCount() {
-        return 0;
-    }
+        ImageView pageThumbnail = (ImageView) convertView.findViewById(R.id.pageThumbnail);
+        pageThumbnail.setCropToPadding(true);
+        pageThumbnail.setPadding(8, 8, 8, 8);
+        ImageHelpers.loadImageIntoViewAsync(scaledBitmapCache,
+                page.getImageUri(), pageThumbnail, 64, 64, getContext().getResources());
 
-    @Override
-    public boolean isEmpty() {
-        return false;
+        ImageView audio = (ImageView) convertView.findViewById(R.id.audio);
+        audio.setCropToPadding(true);
+        audio.setVisibility(page.getAudioPath() == null ? View.INVISIBLE : View.VISIBLE);
+
+        return convertView;
     }
 }
