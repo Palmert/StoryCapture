@@ -1,5 +1,6 @@
 package com.palmer.thestoryteller.fragments;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,20 +16,22 @@ import com.palmer.thestoryteller.helpers.ScaledBitmapCache;
 /**
  * Created by Thom on 11/12/2014.
  */
-public class PageDisplayFragment extends Fragment {
+public class PageEditFragment extends Fragment {
 
     private ImageView mImageView;
     private Page page;
     private ScaledBitmapCache scaledBitmapCache;
     private int imageWidth;
     private int imageHeight;
+    private Uri imageUri;
+
 
     // Empty constructor, required as per Fragment docs
-    public PageDisplayFragment() {
+    public PageEditFragment() {
     }
 
-    public static PageDisplayFragment newInstance() {
-        PageDisplayFragment f = new PageDisplayFragment();
+    public static PageEditFragment newInstance() {
+        PageEditFragment f = new PageEditFragment();
         return f;
     }
 
@@ -41,7 +44,7 @@ public class PageDisplayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // image_detail_fragment.xml contains just an ImageView
-        final View v = inflater.inflate(R.layout.fragment_story_page, container, false);
+        final View v = inflater.inflate(R.layout.fragment_story_page_edit, container, false);
         mImageView = (ImageView) v.findViewById(R.id.imageView);
         return v;
     }
@@ -70,4 +73,5 @@ public class PageDisplayFragment extends Fragment {
     public void setImageHeight(int imageHeight) {
         this.imageHeight = imageHeight;
     }
+
 }

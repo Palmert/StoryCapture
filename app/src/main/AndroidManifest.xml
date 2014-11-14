@@ -28,15 +28,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.palmer.thestoryteller.activities.CaptureStoryActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:parentActivityName="com.palmer.thestoryteller.activities.BookshelfActivity"
-            android:theme="@style/FullscreenTheme">
-            <meta-data
-                android:name="CaptureStoryActivity"
-                android:value="CaptureStoryActivity" />
-        </activity>
-        <activity
             android:name="com.palmer.thestoryteller.activities.StoryPagerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:parentActivityName="com.palmer.thestoryteller.activities.BookshelfActivity"

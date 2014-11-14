@@ -26,6 +26,7 @@ public class StoryListViewAdapter extends ArrayAdapter<Page> {
         super(context, resource, pages);
         this.scaledBitmapCache = scaledBitmapCache;
     }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Page page = getItem(position);
@@ -37,12 +38,16 @@ public class StoryListViewAdapter extends ArrayAdapter<Page> {
         ImageView pageThumbnail = (ImageView) convertView.findViewById(R.id.pageThumbnail);
         pageThumbnail.setCropToPadding(true);
         pageThumbnail.setPadding(8, 8, 8, 8);
+
         ImageHelpers.loadImageIntoViewAsync(scaledBitmapCache,
                 page.getImageUri(), pageThumbnail, 64, 64, getContext().getResources());
 
         ImageView audio = (ImageView) convertView.findViewById(R.id.audio);
         audio.setCropToPadding(true);
-        audio.setVisibility(page.getAudioPath() == null ? View.INVISIBLE : View.VISIBLE);
+
+        //TODO Write code to view whether a page has audio and play it from thumbnail press
+        //audio.setVisibility(page.getAudioPath() == null ? View.INVISIBLE : View.VISIBLE);
+        audio.setVisibility(View.INVISIBLE);
 
         return convertView;
     }

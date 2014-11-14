@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -20,21 +19,17 @@ import android.widget.EditText;
 import com.palmer.thestoryteller.R;
 import com.palmer.thestoryteller.adapters.ImageAdapter;
 import com.palmer.thestoryteller.data.Book;
-import com.palmer.thestoryteller.data.BooksDataSource;
 import com.palmer.thestoryteller.helpers.BitmapCache;
 import com.palmer.thestoryteller.helpers.FileHelpers;
 import com.palmer.thestoryteller.helpers.GridViewBookshelf;
+import com.palmer.thestoryteller.models.BookshelfModel;
 
 public class BookshelfActivity extends Activity {
 
-    private static boolean canEdit = true;
     private Button addBookBtn;
+    private BookshelfModel bookshelfModel;
     private MenuItem viewMenuItem;
     private MenuItem manageMenuItem;
-    private Intent intent;
-    private Uri fileUri;
-    private long bookToDelete;
-    private BooksDataSource booksDataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,34 +37,37 @@ public class BookshelfActivity extends Activity {
         setContentView(R.layout.activity_main);
         getActionBar().setDisplayShowTitleEnabled(false);
 
-        addBookBtn = (Button) findViewById(R.id.addBook);
-        addBookBtn.setVisibility(canEdit ? View.VISIBLE : View.INVISIBLE);
+        bookshelfModel = new BookshelfModel(this);
 
-        booksDataSource = new BooksDataSource(this);
-        booksDataSource.open();
+        addBookBtn = (Button) findViewById(R.id.addBook);
+        addBookBtn.setVisibility(bookshelfModel.isEditable() ? View.VISIBLE : View.INVISIBLE);
+
         GridViewBookshelf bookshelfGrid = (GridViewBookshelf) findViewById(R.id.bookshelfGrid);
         bookshelfGrid.setBitmapCache(new BitmapCache());
-        bookshelfGrid.setAdapter(new ImageAdapter(this, booksDataSource.findAllBooks()));
+        bookshelfGrid.setAdapter(new ImageAdapter(this, bookshelfModel.getBooks()));
 
         bookshelfGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                final Intent i = new Intent(parent.getContext(), BookshelfActivity.canEdit ?
+                final Intent i = new Intent(parent.getContext(), bookshelfModel.isEditable() ?
                         StoryManagerActivity.class : StoryPagerActivity.class);
                 i.putExtra(StoryPagerActivity.BOOK_ID, (Long) v.getTag());
                 startActivity(i);
             }
         });
+
+        // TODO Find out why getTag is failing in createContextMenu
+        //registerForContextMenu(bookshelfGrid);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to the action bar if it ispresent.
         getMenuInflater().inflate(R.menu.main, menu);
         viewMenuItem = menu.findItem(R.id.action_view);
-        viewMenuItem.setVisible(canEdit);
+        viewMenuItem.setVisible(bookshelfModel.isEditable());
 
         manageMenuItem = menu.findItem(R.id.action_manage);
-        manageMenuItem.setVisible(!canEdit);
+        manageMenuItem.setVisible(!bookshelfModel.isEditable());
         return true;
     }
 
@@ -83,10 +81,10 @@ public class BookshelfActivity extends Activity {
         if (id == R.id.action_manage) {
             validatePassword();
         } else if (id == R.id.action_view) {
-            canEdit = false;
+            bookshelfModel.setEditable(false);
             viewMenuItem.setVisible(false);
-            manageMenuItem.setVisible(!canEdit);
-            addBookBtn.setVisibility(canEdit ? View.VISIBLE : View.INVISIBLE);
+            manageMenuItem.setVisible(!bookshelfModel.isEditable());
+            addBookBtn.setVisibility(bookshelfModel.isEditable() ? View.VISIBLE : View.INVISIBLE);
         }
 
         return super.onOptionsItemSelected(item);
@@ -108,13 +106,13 @@ public class BookshelfActivity extends Activity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 Editable value = input.getText();
                 if (value != null && value.toString().compareTo("1234") == 0) {
-                    canEdit = true;
+                    bookshelfModel.setEditable(true);
                 } else {
-                    canEdit = false;
+                    bookshelfModel.setEditable(false);
                 }
-                addBookBtn.setVisibility(canEdit ? View.VISIBLE : View.INVISIBLE);
-                manageMenuItem.setVisible(!canEdit);
-                viewMenuItem.setVisible(canEdit);
+                addBookBtn.setVisibility(bookshelfModel.isEditable() ? View.VISIBLE : View.INVISIBLE);
+                manageMenuItem.setVisible(!bookshelfModel.isEditable());
+                viewMenuItem.setVisible(bookshelfModel.isEditable());
             }
         });
 
@@ -130,9 +128,10 @@ public class BookshelfActivity extends Activity {
     }
 
     public void captureImage() {
-        intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = FileHelpers.getOutputMediaFileUri(FileHelpers.MEDIA_TYPE_IMAGE, this);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        bookshelfModel.setFileUri(FileHelpers.getOutputMediaFileUri(
+                FileHelpers.MEDIA_TYPE_IMAGE, this));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, bookshelfModel.getFileUri());
         // start the image capture Intent
         startActivityForResult(intent, FileHelpers.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
@@ -144,21 +143,21 @@ public class BookshelfActivity extends Activity {
             case FileHelpers.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE: {
                 if (resultCode == RESULT_OK) {
                     Intent photoPickerIntent = new Intent(Intent.ACTION_EDIT);
-                    photoPickerIntent.setDataAndType(fileUri, "image/*");
-                    photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+                    photoPickerIntent.setDataAndType(bookshelfModel.getFileUri(), "image/*");
+                    photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, bookshelfModel.getFileUri());
                     photoPickerIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivityForResult(photoPickerIntent, FileHelpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE);
                 }
                 break;
             }
             case FileHelpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE: {
-                Book book = new Book(fileUri.toString());
-                booksDataSource.open();
-                book = booksDataSource.create(book);
-                Intent newStoryCapture = new Intent(getApplicationContext(), CaptureStoryActivity.class);
-                newStoryCapture.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                newStoryCapture.putExtra("bookId", book.getId());
-                startActivity(newStoryCapture);
+                Book book = new Book(bookshelfModel.getFileUriString());
+                bookshelfModel.openDataSource();
+                book = bookshelfModel.getBooksDataSource().create(book);
+                final Intent i = new Intent(getApplicationContext(), bookshelfModel.isEditable() ?
+                        StoryManagerActivity.class : StoryPagerActivity.class);
+                i.putExtra(StoryPagerActivity.BOOK_ID, book.getId());
+                startActivity(i);
                 break;
             }
         }
@@ -167,13 +166,13 @@ public class BookshelfActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        booksDataSource.open();
+        bookshelfModel.openDataSource();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        booksDataSource.close();
+        bookshelfModel.closeDataSource();
     }
 
     @Override
@@ -181,8 +180,8 @@ public class BookshelfActivity extends Activity {
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
-        if (canEdit) {
-            bookToDelete = (Long) v.getTag();
+        if (bookshelfModel.isEditable()) {
+            bookshelfModel.setBookToDelete((Long) v.getTag());
             inflater.inflate(R.menu.book_long_press, menu);
         }
 
@@ -193,7 +192,7 @@ public class BookshelfActivity extends Activity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.action_deleteBook: {
-                booksDataSource.deleteBook(bookToDelete);
+                bookshelfModel.getBooksDataSource().deleteBook(bookshelfModel.getBookToDelete());
                 this.recreate();
             }
             default:

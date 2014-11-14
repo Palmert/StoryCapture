@@ -15,6 +15,7 @@ import com.palmer.thestoryteller.R;
  */
 public class GridViewBookshelf extends GridView {
 
+    private static final int DEFAULT_ROW_HEIGHT = 350;
     private BitmapCache bitmapCache;
 
     public GridViewBookshelf(Context context, AttributeSet attrs) {
@@ -29,11 +30,11 @@ public class GridViewBookshelf extends GridView {
     protected void dispatchDraw(Canvas canvas) {
         ImageView imageView = (ImageView) getChildAt(0);
         int count = getChildCount();
+        int height = imageView != null ? imageView.getMeasuredHeight() : DEFAULT_ROW_HEIGHT;
         int top = count > 0 ? getChildAt(0).getTop() : 0;
 
         Bitmap scaledBookshelfRow = bitmapCache.getScaledBitmap(R.drawable.bookshelf,
-                getResources(), getWidth(),
-                imageView.getMeasuredHeight());
+                getResources(), getWidth(), height);
 
         for (int y = top; y < getHeight(); y += scaledBookshelfRow.getHeight()) {
             for (int x = 0; x < getWidth(); x += scaledBookshelfRow.getWidth()) {

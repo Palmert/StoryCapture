@@ -5,17 +5,12 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Black">
+    <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-    </style>
-
-    <style name="Theme.Shelves" parent="android:Theme">
-        <item name="android:windowBackground">@drawable/bookshelf_row</item>
-        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="Theme.NoBackground" parent="android:Theme">
@@ -25,7 +20,6 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="android:displayOptions"></item>
     </style>
 
     <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">

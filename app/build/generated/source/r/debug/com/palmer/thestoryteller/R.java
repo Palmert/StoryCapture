@@ -38,33 +38,31 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int ic_launcher=0x7f020009;
     }
     public static final class id {
-        public static final int action_delete=0x7f090010;
-        public static final int action_deleteBook=0x7f09000d;
-        public static final int action_manage=0x7f09000e;
-        public static final int action_settings=0x7f090011;
-        public static final int action_view=0x7f09000f;
-        public static final int addAudio=0x7f090006;
+        public static final int action_delete=0x7f09000f;
+        public static final int action_deleteBook=0x7f09000c;
+        public static final int action_manage=0x7f09000d;
+        public static final int action_settings=0x7f090010;
+        public static final int action_view=0x7f09000e;
+        public static final int addAudio=0x7f090008;
         public static final int addBook=0x7f090001;
-        public static final int addPage=0x7f090007;
-        public static final int audio=0x7f09000c;
-        public static final int book_navigation=0x7f09000a;
+        public static final int addPage=0x7f090009;
+        public static final int audio=0x7f09000b;
+        public static final int book_navigation=0x7f090004;
         public static final int bookshelfGrid=0x7f090000;
-        public static final int drawer_layout=0x7f090008;
-        public static final int fullscreen_content_controls=0x7f090003;
-        public static final int imageView=0x7f090002;
-        public static final int nextPage=0x7f090004;
-        public static final int pageThumbnail=0x7f09000b;
-        public static final int savePage=0x7f090005;
-        public static final int view_pager=0x7f090009;
+        public static final int drawer_layout=0x7f090002;
+        public static final int fullscreen_content_controls=0x7f090006;
+        public static final int imageView=0x7f090005;
+        public static final int pageThumbnail=0x7f09000a;
+        public static final int savePage=0x7f090007;
+        public static final int view_pager=0x7f090003;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
-        public static final int activity_read_story=0x7f030001;
-        public static final int activity_story_capture=0x7f030002;
-        public static final int activity_story_manager=0x7f030003;
-        public static final int activity_story_reader=0x7f030004;
-        public static final int fragment_story_page=0x7f030005;
-        public static final int item_page=0x7f030006;
+        public static final int activity_story_manager=0x7f030001;
+        public static final int activity_story_reader=0x7f030002;
+        public static final int fragment_story_page=0x7f030003;
+        public static final int fragment_story_page_edit=0x7f030004;
+        public static final int item_page=0x7f030005;
     }
     public static final class menu {
         public static final int book_long_press=0x7f080000;
@@ -107,13 +105,14 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
  API 14 theme customizations can go here. 
          */
         public static final int AppBaseTheme=0x7f070000;
+        /**  All customizations that are NOT specific to a particular API-level can go here. 
+         */
         public static final int AppTheme=0x7f070001;
         public static final int ButtonBar=0x7f070002;
         public static final int ButtonBarButton=0x7f070003;
-        public static final int FullscreenActionBarStyle=0x7f070007;
+        public static final int FullscreenActionBarStyle=0x7f070006;
         public static final int FullscreenTheme=0x7f070004;
         public static final int Theme_NoBackground=0x7f070005;
-        public static final int Theme_Shelves=0x7f070006;
     }
     public static final class styleable {
         /** Attributes that can be used with a ButtonBarContainerTheme.

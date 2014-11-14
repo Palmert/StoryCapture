@@ -65,6 +65,7 @@ public class ImageAdapter extends BaseAdapter {
             imageView.setTag(books.get(position).getId());
         } else {
             imageView = (ImageView) convertView;
+            imageView.setTag(books.get(position).getId());
         }
 
         ImageHelpers.loadImageIntoViewAsync(scaledBitmapCache,

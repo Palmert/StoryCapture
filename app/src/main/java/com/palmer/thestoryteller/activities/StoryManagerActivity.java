@@ -1,32 +1,29 @@
 package com.palmer.thestoryteller.activities;
 
-import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.palmer.thestoryteller.R;
+import com.palmer.thestoryteller.adapters.BookPagerAdapter;
 import com.palmer.thestoryteller.adapters.StoryListViewAdapter;
 import com.palmer.thestoryteller.data.Book;
 import com.palmer.thestoryteller.data.BooksDataSource;
 import com.palmer.thestoryteller.data.Page;
-import com.palmer.thestoryteller.fragments.PageDisplayFragment;
 import com.palmer.thestoryteller.helpers.DepthPageTransformer;
 import com.palmer.thestoryteller.helpers.FileHelpers;
 import com.palmer.thestoryteller.helpers.ScaledBitmapCache;
-
-import java.util.List;
 
 /**
  * Created by Thom on 11/12/2014.
@@ -34,14 +31,20 @@ import java.util.List;
 public class StoryManagerActivity extends FragmentActivity {
     public static final String BOOK_ID = "bookId";
 
-    private ImagePagerAdapter mAdapter;
+    private BookPagerAdapter mAdapter;
     private StoryListViewAdapter listAdapter;
     private ViewPager mPager;
     private ListView pageList;
     private DrawerLayout drawerLayout;
-    private BooksDataSource data;
-    private ScaledBitmapCache scaledBitmapCache;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    //TODO move to model
+    private ScaledBitmapCache scaledBitmapCache;
+    private BooksDataSource data;
+    private Uri imageUri;
+    private Book selectedBook;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class StoryManagerActivity extends FragmentActivity {
         if (getIntent().hasExtra(BOOK_ID)) {
             data = new BooksDataSource(this);
             data.open();
-            Book selectedBook = data.findBookById(getIntent().getExtras().getLong(BOOK_ID));
+            selectedBook = data.findBookById(getIntent().getExtras().getLong(BOOK_ID));
             selectedBook.getPageList().add(0,
                     new Page(selectedBook.getId(), selectedBook.getImagePath()));
 
@@ -60,16 +63,24 @@ public class StoryManagerActivity extends FragmentActivity {
                     ScaledBitmapCache.createFixedDirectoryLocator(
                             FileHelpers.getOutputMediaFileUri(FileHelpers.MEDIA_TYPE_IMAGE, this).toString()));
 
-            mAdapter = new ImagePagerAdapter(getSupportFragmentManager(),
-                    selectedBook.getPageList(), this, scaledBitmapCache);
+            mAdapter = new BookPagerAdapter(getSupportFragmentManager(),
+                    selectedBook.getPageList(), this, scaledBitmapCache, true);
             mPager = (ViewPager) findViewById(R.id.view_pager);
             mPager.setPageTransformer(true, new DepthPageTransformer());
             mPager.setAdapter(mAdapter);
+
 
             listAdapter = new StoryListViewAdapter(this, R.layout.item_page,
                     selectedBook.getPageList(), scaledBitmapCache);
             pageList = (ListView) findViewById(R.id.book_navigation);
             pageList.setAdapter(listAdapter);
+            pageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    mPager.setCurrentItem(position);
+                }
+            });
+
 
             drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
             mDrawerToggle = new ActionBarDrawerToggle(
@@ -128,41 +139,65 @@ public class StoryManagerActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void savePage(View view) {
+        NavUtils.navigateUpFromSameTask(this);
+    }
 
-    public static class ImagePagerAdapter extends FragmentStatePagerAdapter {
-        private final List<Page> pages;
-        private Context mContext;
-        private ScaledBitmapCache scaledBitmapCache;
+    public void addPage(View v) {
+        captureImage();
+    }
 
-        public ImagePagerAdapter(FragmentManager fm, List<Page> pages, Context mContext,
-                                 ScaledBitmapCache bitmapCache) {
-            super(fm);
-            this.pages = pages;
-            this.mContext = mContext;
-            this.scaledBitmapCache = bitmapCache;
-        }
+    public void captureImage() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        imageUri = FileHelpers.getOutputMediaFileUri(FileHelpers.MEDIA_TYPE_IMAGE,
+                this);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri); // set the image file name
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        // start the image capture Intent
+        startActivityForResult(intent, FileHelpers.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
 
-        @Override
-        public int getCount() {
-            return this.pages.size();
-        }
+    public void addAudio(View v) {
+        Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivityForResult(intent, FileHelpers.CAPTURE_PAGE_AUDIO_REQUEST_CODE);
+    }
 
-        @Override
-        public android.support.v4.app.Fragment getItem(int position) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        switch (requestCode) {
+            case FileHelpers.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE: {
+                if (resultCode == RESULT_OK) {
+                    Intent photoPickerIntent = new Intent(Intent.ACTION_EDIT);
+                    photoPickerIntent.setDataAndType(imageUri, "image/*");
+                    photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                    photoPickerIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivityForResult(photoPickerIntent, FileHelpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE);
+                }
+                break;
+            }
+            case FileHelpers.CAPTURE_PAGE_AUDIO_REQUEST_CODE: {
+                if (resultCode == RESULT_OK) {
+                    Page page = selectedBook.getPageList().get(mPager.getCurrentItem());
+                    page.setAudioPath(intent.getData().toString());
+                    data.open();
+                    data.update(page);
+                }
+                break;
+            }
+            case FileHelpers.EDIT_IMAGE_ACTIVITY_REQUEST_CODE: {
+                Page page = new Page(selectedBook.getId(), imageUri.toString());
+                data.open();
+                data.create(page);
+                selectedBook.getPageList().add(page);
+                mAdapter.notifyDataSetChanged();
+                mPager.setCurrentItem(mPager.getCurrentItem() + 1);
 
-            WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-            Display display = wm.getDefaultDisplay();
-            Point displaySize = new Point();
-            display.getSize(displaySize);
-
-            PageDisplayFragment f = PageDisplayFragment.newInstance();
-
-            f.setImageWidth(displaySize.x);
-            f.setImageHeight(displaySize.y);
-            f.setPage(pages.get(position));
-            f.setScaledBitmapCache(scaledBitmapCache);
-
-            return f;
+                break;
+            }
         }
     }
+
+
 }
